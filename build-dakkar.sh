@@ -391,7 +391,7 @@ function clone_or_checkout() {
             git checkout origin/"$localManifestBranch"
         )
     else
-        git clone https://github.com/phhusson/"$repo" "$dir" -b "$localManifestBranch"
+        git clone https://github.com/robothanzo/"$repo" "$dir" -b "$localManifestBranch"
     fi
 }
 
@@ -401,16 +401,8 @@ function init_local_manifest() {
 
 download_patches() {
 	echo "Downloading Patches..."
-	if [[ $localManifestBranch == android-10.0 ]];then
-		githubMatch=v2..
-	elif [[ $localManifestBranch == android-9.0 ]];then
-		githubMatch=v1..
-	else
-		githubMatch=v..
-	fi
     jq --help > /dev/null
-	wantedRelease="$(curl --silent https://api.github.com/repos/phhusson/treble_experimentations/releases |jq -r '.[] | .tag_name' |grep -E "$githubMatch\$" |sort -V | tail -n 1)"
-	wget "https://github.com/phhusson/treble_experimentations/releases/download/$wantedRelease/patches.zip" -O patches.zip
+	wget "https://cdn.robothanzo.dev/patches.zip" -O patches.zip
 	rm -Rf patches
 	unzip patches.zip -d patches
   echo "   ...done Downloading Patches"
