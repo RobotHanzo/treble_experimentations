@@ -60,7 +60,7 @@ ROM types:
   potato-pie
   rebellion-pie
   rr-oreo
-  rr-pie
+  rr-q
   slim-oreo
   graphene9
   graphene10
