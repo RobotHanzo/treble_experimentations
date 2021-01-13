@@ -25,6 +25,7 @@ while [ "$1" != "" ]; do
             ;;
         -j)
             j=$VALUE
+            ;;
         --gapps)
             gapps=$VALUE
             ;;
