@@ -66,6 +66,7 @@ echo "Build succeeded, now uploading..."
 echo ""
 echo "================================="
 ftp -n $ftp_host <<END_SCRIPT
+prompt
 quote USER $ftp_username
 quote PASS $ftp_password
 binary
