@@ -10,7 +10,7 @@ sftp_username=''
 sftp_password=''
 
 
-images="release/$(date +%y%m%d)/*.img"
+images="release/$(date +%y%m%d)/*"
 function usage()
 {
     echo "Build treble for Resurrection Remix"
