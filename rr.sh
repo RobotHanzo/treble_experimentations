@@ -3,11 +3,11 @@ j=$(nproc --all)
 gapps="vanilla"
 su="nosu"
 type="userdebug"
-ftp_host='uploads.androidfilehost.com'
+sftp_host='uploads.androidfilehost.com'
 # This section should be manually configured to match what it really is
 
-ftp_username=''
-ftp_password=''
+sftp_username=''
+sftp_password=''
 
 
 images="release/$(date +%y%m%d)/*.img"
@@ -65,13 +65,8 @@ echo ""
 echo "Build succeeded, now uploading..."
 echo ""
 echo "================================="
-ftp -n $ftp_host <<END_SCRIPT
-prompt
-passive
-quote USER $ftp_username
-quote PASS $ftp_password
-binary
-mput $images
-quit
-END_SCRIPT
-exit 0
+export SSHPASS=$sftp_password
+sshpass -e sftp -oBatchMode=no -b - $sftp_username@$sftp_host << !
+   put $images
+   bye
+!
