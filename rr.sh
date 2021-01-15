@@ -65,8 +65,4 @@ echo ""
 echo "Build succeeded, now uploading..."
 echo ""
 echo "================================="
-export SSHPASS=$sftp_password
-sshpass -e sftp -oBatchMode=no -oPort=23 -b - $sftp_username@$sftp_host << !
-   mput $images
-   bye
-!
+lftp -c "open -u $sftp_username,$sftp_password sftp://$sftp_host:23 ; mput $images"
