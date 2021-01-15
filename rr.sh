@@ -67,6 +67,6 @@ echo ""
 echo "================================="
 export SSHPASS=$sftp_password
 sshpass -e sftp -oBatchMode=no -oPort=23 -b - $sftp_username@$sftp_host << !
-   put $images
+   $(for i in $images; do echo "put $i"; done)
    bye
 !
