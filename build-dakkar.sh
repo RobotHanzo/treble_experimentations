@@ -532,9 +532,8 @@ if [[ $build_dakkar_choice == *"y"* ]];then
     init_patches
     sync_repo
     fix_missings
+    patch_things
 fi
-
-patch_things
 
 if [[ $jack_enabled == "true" ]]; then
     jack_env
