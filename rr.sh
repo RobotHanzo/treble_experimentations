@@ -52,12 +52,16 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
+echo "================================"
+echo ""
 echo "Confirm your selections:"
 echo ""
 echo "Job Count: $j"
 echo "OpenGAPPS Implementation: $gapps"
 echo "Superuser: $su"
 echo "Build Type: $type"
+echo ""
+echo "================================"
 echo ""
 read -p "Press any key to proceed building Resurrection Remix"
 bash ../treble_experimentations/build-dakkar.sh -j $j rr-q arm-aonly-$gapps-$su-$type arm-ab-$gapps-$su-$type a64-aonly-$gapps-$su-$type a64-ab-$gapps-$su-$type arm64-aonly-$gapps-$su-$type arm64-ab-$gapps-$su-$type
