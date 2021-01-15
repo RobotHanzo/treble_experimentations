@@ -11,6 +11,7 @@ ftp_password=''
 
 
 images="release/$(date +%y%m%d)/*"
+export _JAVA_OPTIONS='-Xmx4G'
 function usage()
 {
     echo "Build treble for Resurrection Remix"
