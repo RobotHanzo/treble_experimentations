@@ -3,6 +3,14 @@ j=$(nproc --all)
 gapps="vanilla"
 su="nosu"
 type="userdebug"
+ftp_host='uploads.androidfilehost.com'
+# This section should be manually configured to match what it really is
+
+ftp_username=''
+ftp_password=''
+
+
+images="release/$(date +%y%m%d)/*.img"
 function usage()
 {
     echo "Build treble for Resurrection Remix"
@@ -52,3 +60,16 @@ echo "Build Type: $type"
 echo ""
 read -p "Press any key to proceed building Resurrection Remix"
 bash ../treble_experimentations/build-dakkar.sh -j $j rr-q arm-aonly-$gapps-$su-$type arm-ab-$gapps-$su-$type a64-aonly-$gapps-$su-$type a64-ab-$gapps-$su-$type arm64-aonly-$gapps-$su-$type arm64-ab-$gapps-$su-$type
+echo "================================="
+echo ""
+echo "Build succeeded, now uploading..."
+echo ""
+echo "================================="
+ftp -n $ftp_host <<END_SCRIPT
+quote USER $ftp_username
+quote PASS $ftp_password
+binary
+mput $images
+quit
+END_SCRIPT
+exit 0
