@@ -3,7 +3,7 @@ j=$(nproc --all)
 gapps="vanilla"
 su="nosu"
 type="userdebug"
-sftp_host='uploads.androidfilehost.com'
+sftp_host='uploads.androidfilehost.com:23'
 # This section should be manually configured to match what it really is
 
 sftp_username=''
