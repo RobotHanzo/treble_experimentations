@@ -67,6 +67,7 @@ echo ""
 echo "================================="
 ftp -n $ftp_host <<END_SCRIPT
 prompt
+passive
 quote USER $ftp_username
 quote PASS $ftp_password
 binary
