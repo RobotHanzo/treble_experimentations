@@ -3,7 +3,7 @@ j=$(nproc --all)
 gapps="vanilla"
 su="nosu"
 type="userdebug"
-sftp_host='uploads.androidfilehost.com:23'
+sftp_host='uploads.androidfilehost.com'
 # This section should be manually configured to match what it really is
 
 sftp_username=''
@@ -66,7 +66,7 @@ echo "Build succeeded, now uploading..."
 echo ""
 echo "================================="
 export SSHPASS=$sftp_password
-sshpass -e sftp -oBatchMode=no -b - $sftp_username@$sftp_host << !
+sshpass -e sftp -oBatchMode=no -oPort=23 -b - $sftp_username@$sftp_host << !
    put $images
    bye
 !
