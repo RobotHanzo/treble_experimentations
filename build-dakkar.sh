@@ -376,7 +376,7 @@ function init_release() {
 }
 
 function init_main_repo() {
-    repo init -u "$mainrepo" -b "$mainbranch"
+    repo init -u "$mainrepo" -b "$mainbranch" --depth=1
 }
 
 function clone_or_checkout() {
@@ -430,7 +430,7 @@ function init_patches() {
 }
 
 function sync_repo() {
-    repo sync -c -j "$jobs" -f --force-sync --no-tag --no-clone-bundle --optimized-fetch --prune
+    repo sync -c -j "$((jobs*2))" -f --force-sync --no-tag --no-clone-bundle --optimized-fetch --prune
 }
 
 function patch_things() {
