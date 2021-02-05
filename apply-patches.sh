@@ -25,7 +25,9 @@ for project in $(cd $patches/patches; echo *);do
 			git add -u
 			git am --continue
 		else
+			echo ""
 			echo "Failed applying $patch"
+			echo ""
 		fi
 	done
 	popd
