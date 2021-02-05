@@ -21,10 +21,11 @@ for project in $(cd $patches/patches; echo *);do
 		elif patch -f -p1 --dry-run < $patch > /dev/null;then
 			#This will fail
 			git am $patch || true
-			patch -f -p1 < $patch
-			git add -u
-			git am --continue
+			patch -f -p1 < $patch > /dev/null
+			git add -u > /dev/null
+			git am --continue > /dev/null
 		else
+			git am $patch
 			echo ""
 			echo "Failed applying $patch"
 			echo ""
