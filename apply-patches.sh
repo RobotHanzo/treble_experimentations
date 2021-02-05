@@ -16,7 +16,7 @@ for project in $(cd $patches/patches; echo *);do
 			continue
 		fi
 
-		if git apply --check $patch;then
+		if git apply --check $patch > /dev/null;then
 			git am $patch
 		elif patch -f -p1 --dry-run < $patch > /dev/null;then
 			#This will fail
