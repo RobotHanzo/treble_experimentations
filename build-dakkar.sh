@@ -430,7 +430,7 @@ function init_patches() {
 }
 
 function sync_repo() {
-    repo sync -c -j "$((jobs*2))" -f --force-sync --no-tag --no-clone-bundle --optimized-fetch --prune
+    repo sync -c -j "$((jobs*4))" -f --force-sync --no-tag --no-clone-bundle --optimized-fetch --prune
 }
 
 function patch_things() {
