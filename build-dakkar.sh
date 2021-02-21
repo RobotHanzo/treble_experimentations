@@ -416,7 +416,7 @@ function init_patches() {
 
         # We don't want to replace from AOSP since we'll be applying
         # patches by hand
-        rm -f .repo/local_manifests/replace.xml
+        #rm -f .repo/local_manifests/replace.xml
 
         # Remove exfat entry from local_manifest if it exists in ROM manifest 
         if grep -rqF exfat .repo/manifests || grep -qF exfat .repo/manifest.xml;then
