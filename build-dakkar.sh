@@ -502,11 +502,6 @@ function jack_env() {
     fi
 }
 
-function clean_build() {
-    make installclean
-    rm -rf "$OUT"
-}
-
 parse_options "$@"
 get_rom_type "$@"
 get_variants "$@"
@@ -537,17 +532,6 @@ fi
 
 if [[ $jack_enabled == "true" ]]; then
     jack_env
-fi
-
-if [[ -v build_dakkar_clean ]]
-then
-echo "Using exported clean choice"
-else
-read -p "Do you want to clean? (y/N) " build_dakkar_clean
-fi
-
-if [[ $build_dakkar_clean == *"y"* ]];then
-    clean_build
 fi
 
 . build/envsetup.sh
