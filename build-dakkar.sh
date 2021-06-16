@@ -452,7 +452,7 @@ function patch_things() {
         (
             cd device/phh/treble
             git clean -fdx
-            bash generate.sh
+            bash generate.sh "$treble_generate"
         )
         echo "   ...calling list-patches.sh"
         repo manifest -r > release/"$rom_fp"/manifest.xml
@@ -488,7 +488,6 @@ function fix_missings() {
 }
 
 function build_variant() {
-    bash generate.sh rr
     lunch "$1"
     make $extra_make_options BUILD_NUMBER="$rom_fp" installclean
     make $extra_make_options BUILD_NUMBER="$rom_fp" -j "$jobs" systemimage
@@ -536,7 +535,7 @@ if [[ $jack_enabled == "true" ]]; then
 fi
 
 . build/envsetup.sh
-
+bash device/phh/treble/generate.sh rr
 for (( idx=0; idx < ${#variant_codes[*]}; idx++ )); do
     build_variant "${variant_codes[$idx]}" "${variant_names[$idx]}"
 done
