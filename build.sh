@@ -14,6 +14,8 @@ manifest_url="https://android.googlesource.com/platform/manifest"
 aosp="android-8.1.0_r65"
 phh="android-8.1"
 
+build_target="$1"
+rebuild_release=""
 if [ "$1" == "android-9.0" ];then
     manifest_url="https://gitlab.com/aosp-security/manifest"
     aosp="android-9.0.0_r53-r47"
@@ -24,8 +26,25 @@ elif [ "$1" == "android-10.0" ];then
     phh="android-10.0"
 elif [ "$1" == "android-11.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-11.0.0_r27"
+    aosp="android-11.0.0_r38"
     phh="android-11.0"
+else
+	# guess android version from version number
+	rebuild_release="yes"
+	if [ -n "$(echo $1 | grep -E '^v3..')" ];then
+		build_target="android-11.0"
+	elif [ -n "$(echo $1 | grep -E '^v2..')" ];then
+		build_target="android-10.0"
+	elif [ -n "$(echo $1 | grep -E '^v1..')" ];then
+		build_target="android-9.0"
+	else
+		build_target="android-8.1"
+	fi
+	# download manifest with the given version number
+	tmp_manifest_source=$(mktemp -d)
+	wget "https://github.com/phhusson/treble_experimentations/releases/download/$1/manifest.xml" -O $tmp_manifest_source/manifest.xml
+	sed -i 's/<remote name="aosp" fetch=".." review="https:\/\/android-review.googlesource.com\/"\/>/<remote name="aosp" fetch="https:\/\/android.googlesource.com\/" review="https:\/\/android-review.googlesource.com\/"\/>/' $tmp_manifest_source/manifest.xml
+	(cd $tmp_manifest_source; git init; git add manifest.xml; git commit -m "$1")
 fi
 
 if [ "$release" == true ];then
@@ -33,11 +52,15 @@ if [ "$release" == true ];then
     [ ! -f "$originFolder/release/config.ini" ] && exit 1
 fi
 
-repo init -u "$manifest_url" -b $aosp
-if [ -d .repo/local_manifests ] ;then
-	( cd .repo/local_manifests; git fetch; git reset --hard; git checkout origin/$phh)
+if [ -n "$rebuild_release" ];then
+	repo init -u "$tmp_manifest_source" -m manifest.xml
 else
-	git clone https://github.com/phhusson/treble_manifest .repo/local_manifests -b $phh
+	repo init -u "$manifest_url" -b $aosp
+	if [ -d .repo/local_manifests ] ;then
+		( cd .repo/local_manifests; git fetch; git reset --hard; git checkout origin/$phh)
+	else
+		git clone https://github.com/phhusson/treble_manifest .repo/local_manifests -b $phh
+	fi
 fi
 repo sync -c -j 1 --force-sync
 
@@ -60,7 +83,7 @@ repo manifest -r > release/$rom_fp/manifest.xml
 bash "$originFolder"/list-patches.sh
 cp patches.zip release/$rom_fp/patches.zip
 
-if [ "$1" = "android-11.0" ];then
+if [ "$build_target" == "android-11.0" ];then
     (
         git clone https://github.com/phhusson/sas-creator
         cd sas-creator
@@ -82,6 +105,10 @@ if [ "$1" = "android-11.0" ];then
 	buildVariant treble_arm_bvS-userdebug roar-arm-ab-vanilla
     ( cd sas-creator; bash run.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-roar-arm-aonly-vanilla.img.xz )
 
+    # ARM32 gogapps {ab, a-only}
+	buildVariant treble_arm_boS-userdebug roar-arm-ab-gogapps
+    ( cd sas-creator; bash run.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-roar-arm-aonly-gogapps.img.xz )
+
     # ARM32_binder64 vanilla {ab, ab vndk lite}
 	buildVariant treble_a64_bvS-userdebug roar-arm32_binder64-ab-vanilla
     ( cd sas-creator; bash lite-adapter.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-roar-arm32_binder64-ab-vndklite-vanilla.img.xz)
@@ -98,7 +125,7 @@ if [ "$1" = "android-11.0" ];then
     # ARM32_binder64 gapps {ab, ab vndk lite}
 	buildVariant treble_a64_bgS-userdebug roar-arm32_binder64-ab-gapps
     ( cd sas-creator; bash lite-adapter.sh 32; xz -c s.img -T0 > ../release/$rom_fp/system-roar-arm32_binder64-ab-vndklite-gapps.img.xz )
-elif [ "$1" = "android-10.0" ];then
+elif [ "$build_target" == "android-10.0" ];then
 	buildVariant treble_arm64_afS-userdebug quack-arm64-aonly-floss
 	buildVariant treble_arm64_avS-userdebug quack-arm64-aonly-vanilla
 	buildVariant treble_arm64_agS-userdebug quack-arm64-aonly-gapps
@@ -131,7 +158,7 @@ else
 	rm -Rf out/target/product/phhgsi*
 
 	buildVariant treble_arm_avN-userdebug arm-aonly-vanilla-nosu
-	[ "$1" != "android-9.0" ] && buildVariant treble_arm_aoS-userdebug arm-aonly-go-su
+	[ "$build_target" != "android-9.0" ] && buildVariant treble_arm_aoS-userdebug arm-aonly-go-su
 	buildVariant treble_arm_agS-userdebug arm-aonly-gapps-su
 	rm -Rf out/target/product/phhgsi*
 
@@ -139,7 +166,7 @@ else
 	buildVariant treble_a64_agS-userdebug arm32_binder64-aonly-gapps-su
 	rm -Rf out/target/product/phhgsi*
 
-	if [ "$1" = "android-9.0" ];then
+	if [ "$build_target" == "android-9.0" ];then
 	buildVariant treble_a64_bvN-userdebug arm32_binder64-ab-vanilla-nosu
 	buildVariant treble_a64_bgS-userdebug arm32_binder64-ab-gapps-su
 	fi
@@ -156,7 +183,7 @@ if [ "$release" == true ];then
         pip install -r $originFolder/release/requirements.txt
 
         name="AOSP 8.1"
-        [ "$1" == "android-9.0" ] && name="AOSP 9.0"
+        [ "$build_target" == "android-9.0" ] && name="AOSP 9.0"
         python $originFolder/release/push.py "$name" "$version" release/$rom_fp/
         rm -Rf venv
     )
