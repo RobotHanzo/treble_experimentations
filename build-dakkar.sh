@@ -533,9 +533,9 @@ fi
 if [[ $jack_enabled == "true" ]]; then
     jack_env
 fi
-
-. build/envsetup.sh
 bash device/phh/treble/generate.sh rr
+. build/envsetup.sh
+
 for (( idx=0; idx < ${#variant_codes[*]}; idx++ )); do
     build_variant "${variant_codes[$idx]}" "${variant_names[$idx]}"
 done
