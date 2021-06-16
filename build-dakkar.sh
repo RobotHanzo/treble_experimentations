@@ -488,6 +488,7 @@ function fix_missings() {
 }
 
 function build_variant() {
+    bash generate.sh rr
     lunch "$1"
     make $extra_make_options BUILD_NUMBER="$rom_fp" installclean
     make $extra_make_options BUILD_NUMBER="$rom_fp" -j "$jobs" systemimage
